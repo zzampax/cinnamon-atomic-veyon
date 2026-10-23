@@ -81,7 +81,6 @@ WantedBy=timers.target
 EOF
 
 # Enable needed services
-systemctl daemon-reload
 systemctl enable bootc-upgrade.timer
 systemctl enable podman.socket
 
