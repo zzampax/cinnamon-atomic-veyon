@@ -54,3 +54,6 @@ dnf5 install -y /tmp/veyon.rpm
 
 systemctl enable podman.socket
 systemctl disable brltty.service
+systemctl disable sshd.service
+# Replace following with firewall-cmd <enable veyon ports>
+systemclt disable firewalld.service
