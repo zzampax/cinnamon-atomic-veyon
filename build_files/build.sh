@@ -5,6 +5,10 @@ set -ouex pipefail
 # Copy the contents of system_files/ of the git repo to /
 cp -avf "/ctx/system_files"/. /
 
+# Set correct keymap
+echo 'KEYMAP=it' > /etc/vconsole.conf
+localectl set-keymap it
+
 ### Install packages
 
 # Packages can be installed from any enabled yum repo on the image.
