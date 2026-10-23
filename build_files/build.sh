@@ -53,3 +53,4 @@ dnf5 install -y /tmp/veyon.rpm
 #### Example for enabling a System Unit File
 
 systemctl enable podman.socket
+systemctl disable brltty.service
