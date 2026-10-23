@@ -36,8 +36,7 @@ RUN mkdir -p /var/lib/lightdm-data && \
     chmod 0700 /var/lib/lightdm-data
 
 # Browser and Terminal
-sudo dnf config-manager addrepo --from-repofile=https://repo.librewolf.net/librewolf.repo
-dnf5 install -y librewolf gnome-console
+dnf5 install -y firefox gnome-console
 
 # Veyon configuration
 wget -O /tmp/veyon.rpm https://github.com/veyon/veyon/releases/download/v4.11.4/veyon-4.11.4.0-fedora.44.x86_64.rpm
