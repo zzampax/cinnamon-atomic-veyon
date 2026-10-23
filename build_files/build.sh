@@ -39,7 +39,7 @@ RUN mkdir -p /var/lib/lightdm-data && \
 dnf5 install -y firefox gnome-console
 
 # Veyon configuration
-wget -O /tmp/veyon.rpm https://github.com/veyon/veyon/releases/download/v4.11.3/veyon-4.11.3.0-fedora.44.x86_64.rpm
+wget -O /tmp/veyon.rpm https://github.com/veyon/veyon/releases/download/v4.11.4/veyon-4.11.4.0-fedora.44.x86_64.rpm
 dnf5 reinstall -y procps-ng
 dnf5 install -y /tmp/veyon.rpm
 
@@ -50,10 +50,43 @@ dnf5 install -y /tmp/veyon.rpm
 # Disable COPRs so they don't end up enabled on the final image:
 # dnf5 -y copr disable ublue-os/staging
 
-#### Example for enabling a System Unit File
+# Setup Automatic Updates service
+# Create the service file
+cat > /etc/systemd/system/bootc-upgrade.service << 'EOF'
+[Unit]
+Description=bootc upgrade
+After=network-online.target
+Wants=network-online.target
 
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bootc upgrade
+StandardOutput=journal
+StandardError=journal
+EOF
+
+# Create the timer file
+cat > /etc/systemd/system/bootc-upgrade.timer << 'EOF'
+[Unit]
+Description=Daily bootc upgrade at 04:00 AM
+Requires=bootc-upgrade.service
+
+[Timer]
+OnCalendar=daily
+OnCalendar=*-*-* 04:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+EOF
+
+# Enable needed services
+systemctl daemon-reload
+systemctl enable bootc-upgrade.timer
 systemctl enable podman.socket
+
+# Disable unwanted services
 systemctl disable brltty.service
 systemctl disable sshd.service
 # Replace following with firewall-cmd <enable veyon ports>
-systemclt disable firewalld.service
+systemctl disable firewalld.service
