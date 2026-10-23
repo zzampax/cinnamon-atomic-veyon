@@ -36,7 +36,8 @@ RUN mkdir -p /var/lib/lightdm-data && \
     chmod 0700 /var/lib/lightdm-data
 
 # Browser and Terminal
-dnf5 install -y firefox gnome-console
+sudo dnf config-manager addrepo --from-repofile=https://repo.librewolf.net/librewolf.repo
+dnf5 install -y librewolf gnome-console
 
 # Veyon configuration
 wget -O /tmp/veyon.rpm https://github.com/veyon/veyon/releases/download/v4.11.4/veyon-4.11.4.0-fedora.44.x86_64.rpm
@@ -82,10 +83,19 @@ EOF
 
 # Enable needed services
 systemctl enable bootc-upgrade.timer
+systemctl enable firewalld.service
 systemctl enable podman.socket
 
 # Disable unwanted services
 systemctl disable brltty.service
 systemctl disable sshd.service
-# Replace following with firewall-cmd <enable veyon ports>
-systemctl disable firewalld.service
+
+# Open Firewall ports (veyon)
+firewall-cmd --permanent --add-port=11100/tcp
+firewall-cmd --permanent --add-port=11400/tcp
+firewall-cmd --permanent --add-port=11100/udp
+firewall-cmd --permanent --add-port=11400/udp
+firewall-cmd --reload
+
+
+
