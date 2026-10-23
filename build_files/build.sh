@@ -7,7 +7,6 @@ cp -avf "/ctx/system_files"/. /
 
 # Set correct keymap
 echo 'KEYMAP=it' > /etc/vconsole.conf
-localectl set-keymap it
 
 ### Install packages
 
