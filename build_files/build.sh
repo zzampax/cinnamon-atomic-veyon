@@ -91,11 +91,15 @@ systemctl disable brltty.service
 systemctl disable sshd.service
 
 # Open Firewall ports (veyon)
-firewall-cmd --permanent --add-port=11100/tcp
-firewall-cmd --permanent --add-port=11400/tcp
-firewall-cmd --permanent --add-port=11100/udp
-firewall-cmd --permanent --add-port=11400/udp
-firewall-cmd --reload
-
-
-
+mkdir -p /etc/firewalld/zones
+cat > /etc/firewalld/zones/public.xml << 'EOF'
+<?xml version="1.0" encoding="utf-8"?>
+<zone version="1.0">
+  <short>Public</short>
+  <description>For use in public areas. You do not trust the other computers on networks to not harm your computer. Only selected incoming connections are accepted.</description>
+  <port port="11100" protocol="tcp"/>
+  <port port="11100" protocol="udp"/>
+  <port port="11400" protocol="tcp"/>
+  <port port="11400" protocol="udp"/>
+</zone>
+EOF
