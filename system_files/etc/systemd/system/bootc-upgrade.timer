@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily bootc upgrade at 04:00 AM
+Requires=bootc-upgrade.service
+
+[Timer]
+OnCalendar=daily
+OnCalendar=*-*-* 04:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

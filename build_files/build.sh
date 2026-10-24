@@ -5,10 +5,6 @@ set -ouex pipefail
 # Copy the contents of system_files/ of the git repo to /
 cp -avf "/ctx/system_files"/. /
 
-# Set correct keymap
-echo 'KEYMAP=it' > /etc/vconsole.conf
-loadkeys it
-
 ### Install packages
 
 # Packages can be installed from any enabled yum repo on the image.
@@ -54,36 +50,6 @@ dnf5 install -y /tmp/veyon.rpm
 # Disable COPRs so they don't end up enabled on the final image:
 # dnf5 -y copr disable ublue-os/staging
 
-# Setup Automatic Updates service
-# Create the service file
-cat > /etc/systemd/system/bootc-upgrade.service << 'EOF'
-[Unit]
-Description=bootc upgrade
-After=network-online.target
-Wants=network-online.target
-
-[Service]
-Type=oneshot
-ExecStart=/usr/bin/bootc upgrade
-StandardOutput=journal
-StandardError=journal
-EOF
-
-# Create the timer file
-cat > /etc/systemd/system/bootc-upgrade.timer << 'EOF'
-[Unit]
-Description=Daily bootc upgrade at 04:00 AM
-Requires=bootc-upgrade.service
-
-[Timer]
-OnCalendar=daily
-OnCalendar=*-*-* 04:00:00
-Persistent=true
-
-[Install]
-WantedBy=timers.target
-EOF
-
 # Enable needed services
 systemctl enable bootc-upgrade.timer
 systemctl enable firewalld.service
@@ -92,17 +58,3 @@ systemctl enable podman.socket
 # Disable unwanted services
 systemctl disable brltty.service
 systemctl disable sshd.service
-
-# Open Firewall ports (veyon)
-mkdir -p /etc/firewalld/zones
-cat > /etc/firewalld/zones/public.xml << 'EOF'
-<?xml version="1.0" encoding="utf-8"?>
-<zone version="1.0">
-  <short>Public</short>
-  <description>For use in public areas. You do not trust the other computers on networks to not harm your computer. Only selected incoming connections are accepted.</description>
-  <port port="11100" protocol="tcp"/>
-  <port port="11100" protocol="udp"/>
-  <port port="11400" protocol="tcp"/>
-  <port port="11400" protocol="udp"/>
-</zone>
-EOF

@@ -1,0 +1,3 @@
+[org/cinnamon/desktop/input-sources]
+sources=[('xkb', 'it')]
+current=uint32 0
